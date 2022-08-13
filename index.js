@@ -2,7 +2,7 @@ var http = require('http')
 var encoding = require('encoding')
 var express = require('express'),
   app = (module.exports.app = express()),
-  custom = require('./settings_custom'),
+  custom = require('./config'),
   maps = require('./maps'),
   TokenGenerator = require('uuid-token-generator')
 
@@ -11,11 +11,7 @@ var tokgen = new TokenGenerator() // Default is a 128-bit token encoded in base5
 var server = http.createServer(app)
 var io = require('socket.io').listen(server) //pass a http.Server instance
 server.listen(custom.port)
-console.log(
-  'Сервер клиентских приложений TaxiDispatcher запущен на порту ' +
-    custom.port +
-    '...'
-)
+console.log(`Сервер клиентов TaxiDispatcher запущен на порту ${custom.port}...`)
 
 var sql = require('mssql')
 var clientsLimit = 50
@@ -31,10 +27,10 @@ var config = custom.config,
   },
   useTokenProtect = false
 
-console.log('Start test db-connection...' + sql)
+console.log('Start test db-connection...')
 var connectionMain = new sql.ConnectionPool(config, function (err) {
   if (err) {
-    console.log(err.message) // Canceled.
+    console.log(err.message)
     console.log(err.code)
   } else {
     maps.getSectorsCoordinates(sectors, bbox, connectionMain, function () {
